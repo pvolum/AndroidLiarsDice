@@ -52,6 +52,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         playerList = new ArrayList<Player>();
         boardView = (ListView) findViewById(R.id.boardView);
         nameList = new ArrayList<String>();
@@ -86,35 +87,36 @@ public class MainActivity extends ActionBarActivity {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
 
-        alert.setTitle("Welcome to Liars Dice!");
-        alert.setMessage("Enter # of players");
-        alert.setView(input);
-        alert.setIcon(R.drawable.notification_template_icon_bg);
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                int value = 0;
-                try {
-                    value = Integer.parseInt(input.getText().toString().trim());
-                }
-                catch (NumberFormatException e) {
-                    value = 0;
-                }
-                if (value > 1 && value < 5) {//set player amount between 1 and 4
-                    for (int i = 0; i < value; i++) {   //valid # of players
-                        playerList.add(new Player(i + 1));
-                        nameList.add(playerList.get(i).name);
-                        diceInPlay += 5;
+        alert.setTitle("Welcome to Liars Dice!")
+            .setMessage("Enter # of players")
+            .setView(input)
+            .setIcon(R.drawable.notification_template_icon_bg)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        int value = 0;
+                        try {
+                            value = Integer.parseInt(input.getText().toString().trim());
+                        }
+                        catch (NumberFormatException e) {
+                            value = 0;
+                        }
+                        if (value > 1 && value < 5) {//set player amount between 1 and 4
+                            for (int i = 0; i < value; i++) {   //valid # of players
+                                playerList.add(new Player(i + 1));
+                                nameList.add(playerList.get(i).name);
+                                diceInPlay += 5;
+                            }
+                            diceText.setText("Dice In Play: " + diceInPlay);
+                            dialog.cancel();
+                            claimText.setText("Claim: ");
+                            play(currentPlayer);
+                        } else {//TODO Handle bad user entries for # of players
+                            // alert.setMessage("Invalid # of players, must be between 2 and 4");
+                        }
                     }
-                    diceText.setText("Dice In Play: " + diceInPlay);
-                    dialog.cancel();
-                    claimText.setText("Claim: ");
-                    play(currentPlayer);
-                } else {//TODO Handle bad user entries for # of players
-                    // alert.setMessage("Invalid # of players, must be between 2 and 4");
-                }
-            }
-        });
-        alert.show();
+                })
+            .setCancelable(false)
+            .show();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, nameList);
