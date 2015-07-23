@@ -421,7 +421,7 @@ public class MainActivity extends ActionBarActivity {
             dice[i].setText("");
             dice[i].setBackground(getDiceDrawable(playerList.get(player).hand.get(i)));
             //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
-        }git
+        }
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
             dice[i].setText("DEAD");
             dice[i].setBackground(null);
