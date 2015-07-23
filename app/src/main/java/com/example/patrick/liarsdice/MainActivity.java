@@ -92,7 +92,13 @@ public class MainActivity extends ActionBarActivity {
         alert.setIcon(R.drawable.notification_template_icon_bg);
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                int value = Integer.parseInt(input.getText().toString().trim());
+                int value = 0;
+                try {
+                    value = Integer.parseInt(input.getText().toString().trim());
+                }
+                catch (NumberFormatException e) {
+                    value = 0;
+                }
                 if (value > 1 && value < 5) {//set player amount between 1 and 4
                     for (int i = 0; i < value; i++) {   //valid # of players
                         playerList.add(new Player(i + 1));
@@ -104,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
                     claimText.setText("Claim: ");
                     play(currentPlayer);
                 } else {//TODO Handle bad user entries for # of players
-                  //  alert.setMessage("Invalid # of players, must be between 2 and 4");
+                    // alert.setMessage("Invalid # of players, must be between 2 and 4");
                 }
             }
         });
