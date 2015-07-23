@@ -3,6 +3,7 @@ package com.example.patrick.liarsdice;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -253,8 +254,8 @@ public class MainActivity extends ActionBarActivity {
                     claimText.setText("Claim: ");
                     play(currentPlayer);
                 } else {//TODO Handle bad user entries for # of players
-                   // alert.setMessage("Invalid # of players, must be between 2 and 4");
-                   // alert.show();
+                    // alert.setMessage("Invalid # of players, must be between 2 and 4");
+                    // alert.show();
                 }
             }
         });
@@ -294,7 +295,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-        diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + count + " " + claimf + "'s" );
+        diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + count + " " + claimf + "'s");
 
         claimq = 0;
         claimf = 0;
@@ -325,7 +326,7 @@ public class MainActivity extends ActionBarActivity {
         claimButton.setEnabled(true);
 
         if (claimText.getText() == "Claim: "){
-            resetDice();    //if there is no claim then it is first move in round and dice should be reset
+            //resetDice();    //if there is no claim then it is first move in round and dice should be reset
             doubtButton.setEnabled(false);
             exactButton.setEnabled(false);
         }
@@ -417,10 +418,29 @@ public class MainActivity extends ActionBarActivity {
 
     public void setDice(int player){
         for (int i = 0 ; i < playerList.get(player).hand.size() ; i++){
-            dice[i].setText(Integer.toString(playerList.get(player).hand.get(i)));
-        }
+            dice[i].setText("");
+            dice[i].setBackground(getDiceDrawable(playerList.get(player).hand.get(i)));
+            //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
+        }git
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
             dice[i].setText("DEAD");
+            dice[i].setBackground(null);
+        }
+    }
+
+    public Drawable getDiceDrawable(int value){
+        if(value == 1){
+            return getDrawable(R.drawable.one);
+        }else if(value == 2){
+            return getDrawable(R.drawable.two);
+        }else if (value == 3){
+            return getDrawable(R.drawable.three);
+        }else if (value == 4){
+            return getDrawable(R.drawable.four);
+        }else if (value == 5){
+            return getDrawable(R.drawable.five);
+        }else{
+            return getDrawable(R.drawable.six);
         }
     }
 
