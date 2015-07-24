@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -187,12 +188,15 @@ public class MainActivity extends ActionBarActivity {
     } // exactClick
 
     public void newGame() {
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
+
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle("Select number of players:")
                 .setItems(new CharSequence[] {"2", "3", "4"},
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                mp.start();
                                 int value = which + 2;
                                 for (int i = 0; i < value; i++) {   //valid # of players
                                     playerList.add(new Player(i + 1));
@@ -391,8 +395,8 @@ public class MainActivity extends ActionBarActivity {
             //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
         } // for
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
-            dice[i].setText("DEAD");
-            dice[i].setBackground(null);
+            //dice[i].setText("DEAD");
+            dice[i].setBackground(getDrawable(R.drawable.dead));
         } // for
     } // setDice
 
