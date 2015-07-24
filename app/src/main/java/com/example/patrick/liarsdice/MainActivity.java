@@ -317,6 +317,7 @@ public class MainActivity extends ActionBarActivity {
         LayoutInflater infl = LayoutInflater.from(this);
         final View inflator = infl.inflate(R.layout.claim_layout, null);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final AlertDialog.Builder error = new AlertDialog.Builder(this);
 
         alert.setTitle("Make a claim")
             .setCancelable(true)
@@ -337,26 +338,35 @@ public class MainActivity extends ActionBarActivity {
                 if ((currentQ > claimq) || (currentQ == claimq && currentF > claimf)) {
                     claimq = currentQ;
                     claimf = currentF;
+
+                    //transfer control to next player with status text 4 sec interlude
+                    if (currentPlayer < (playerList.size() - 1)) {
+                        currentPlayer += 1;
+                    } else currentPlayer = 0;
+
+                    statusText.setText("Please Pass Phone To Player " + (currentPlayer + 1));
+                    disableButtons();
+                    hideDice();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            claimText.setText("Claim: " + claimq + " " + claimf + "'s");
+                            play(currentPlayer);
+                        }
+                    }, (4000));
+
                 } else {
-                    //TODO handle bad user input due to it being invalid relative to previous claim
+                    dialog.cancel();
+                    error.setTitle("Invalid Claim")
+                        .setMessage("Please try again.")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
                 }
-
-                //transfer control to next player with status text 4 sec interlude
-                if (currentPlayer < (playerList.size() - 1)) {
-                    currentPlayer += 1;
-                } else currentPlayer = 0;
-
-                statusText.setText("Please Pass Phone To Player " + (currentPlayer + 1));
-                disableButtons();
-                hideDice();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        claimText.setText("Claim: " + claimq + " " + claimf + "'s");
-                        play(currentPlayer);
-                    }
-                }, (4000));
-
             }
         })
         .show();
