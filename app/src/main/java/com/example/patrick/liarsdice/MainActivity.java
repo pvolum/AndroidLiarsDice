@@ -84,32 +84,7 @@ public class MainActivity extends ActionBarActivity {
         claimText.setText("claim: ");
         doubtButton.setEnabled(false);
 
-        //dialog box to get number of players and initialize playerList if valid
-        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        final EditText input = new EditText(this);
-
-        alert.setTitle("Enter number of players:")
-            //.setMessage("Enter # of players")
-            //.setView(input)
-            .setItems(new CharSequence[] {"2", "3", "4"},
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            int value = which + 2;
-                            for (int i = 0; i < value; i++) {   //valid # of players
-                                playerList.add(new Player(i + 1));
-                                nameList.add(playerList.get(i).name);
-                                diceInPlay += 5;
-                            }
-                            diceText.setText("Dice In Play: " + diceInPlay);
-                            dialog.cancel();
-                            claimText.setText("Claim: ");
-                            play(currentPlayer);
-                        }
-                    })
-            .setIcon(R.drawable.notification_template_icon_bg)
-            .setCancelable(false)
-            .create()
-            .show();
+        newGame();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, nameList);
@@ -214,6 +189,31 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    public void newGame() {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Select number of players:")
+                .setItems(new CharSequence[] {"2", "3", "4"},
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                int value = which + 2;
+                                for (int i = 0; i < value; i++) {   //valid # of players
+                                    playerList.add(new Player(i + 1));
+                                    nameList.add(playerList.get(i).name);
+                                    diceInPlay += 5;
+                                }
+                                diceText.setText("Dice In Play: " + diceInPlay);
+                                dialog.cancel();
+                                claimText.setText("Claim: ");
+                                play(currentPlayer);
+                            }
+                        })
+                .setIcon(R.drawable.notification_template_icon_bg)
+                .setCancelable(false)
+                .create()
+                .show();
+    }
+
 
     public void playAgainClick(View v){
         playAgainButton.setEnabled(false);
@@ -223,35 +223,10 @@ public class MainActivity extends ActionBarActivity {
         claimText.setText("claim: ");
         doubtButton.setEnabled(false);
 
-        //dialog box to get number of players and initialize playerList if valid
-        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        final EditText input = new EditText(this);
-
         nameList.clear();
         playerList.clear();
 
-        alert.setTitle("Welcome to Liars Dice!");
-        alert.setMessage("Enter # of players");
-        alert.setView(input);
-        alert.setIcon(R.drawable.notification_template_icon_bg);
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                int value = Integer.parseInt(input.getText().toString().trim());
-                if (value > 1 && value < 5) {//set player amount between 1 and 4
-                    for (int i = 0; i < value; i++) {   //valid # of players
-                        playerList.add(new Player(i + 1));
-                        nameList.add(playerList.get(i).name);
-                    }
-                    dialog.cancel();
-                    claimText.setText("Claim: ");
-                    play(currentPlayer);
-                } else {//TODO Handle bad user entries for # of players
-                    // alert.setMessage("Invalid # of players, must be between 2 and 4");
-                    // alert.show();
-                }
-            }
-        });
-        alert.show();
+        newGame();
 
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
