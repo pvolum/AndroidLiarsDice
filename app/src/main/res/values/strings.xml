@@ -1,6 +1,12 @@
 <resources>
-    <string name="app_name">LiarsDice</string>
+    <string name="app_name">Liars Dice</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_instructions">instructions</string>
+    <string name="num_dice">Dice In Play: 0</string>
+    <string name="make_claim">Make claim Player</string>
+    <string name="claim">Claim: </string>
+    <string name="claim_btn">Make Claim</string>
+    <string name="doubt_btn">Doubt Call</string>
+    <string name="play_again_btn">Play Again</string>
+    <string name="exactly_btn">Exactly</string>
+    <string name="action_instructions">Instructions</string>
 </resources>

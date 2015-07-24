@@ -47,8 +47,6 @@ public class MainActivity extends ActionBarActivity {
     Handler handler;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +99,7 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
+    } // onCreateOptionsMenu
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -116,31 +114,29 @@ public class MainActivity extends ActionBarActivity {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
-        }
+            return true;
+        } // if
 
         return super.onOptionsItemSelected(item);
-    }
+    } // onOptionsItemSelected
 
     public void play(int player){
         diceText.setText("Dice In Play: " + totalDice());
         setDice(player);
 
-
-
         //check end of game condition/ only one person left
         if (playerList.size() == 1){
             statusText.setText("Only one player standing! you win!");
             playAgainButton.setEnabled(true);
-
-        }
+        } // if
         else {
             statusText.setText("Player " + (player + 1) + "'s Turn");
             playerText.setText("Player: " + (player + 1));
             enableButtons();
             disableDice();
-        }
+        } // else
 
-    }
+    } // play
 
     public void claimClick(View v){
         getClaim();
@@ -152,26 +148,26 @@ public class MainActivity extends ActionBarActivity {
             for (int x = 0 ; x < playerList.get(i).hand.size(); x++){
                 if (playerList.get(i).hand.get(x) == claimf || playerList.get(i).hand.get(x) == 1){
                     count++;
-                }
-            }
-        }
+                } // if
+            } // for
+        } // for
 
         if (count == claimq && playerList.get(currentPlayer).hand.size() !=5){
             //exact call was correct so add dice to currentplayers hand
             //if currentPlayer doesnt already have 5 dice
             playerList.get(currentPlayer).hand.add(r.nextInt(6) + 1);
             statusText.setText("Player " + (currentPlayer + 1) + ", wins a dice & starts next round!");
-        }
+        } // if
         else if(count == claimq && playerList.get(currentPlayer).hand.size() ==5){
             statusText.setText("Player " + (currentPlayer + 1) + ", was correct & starts next round!" );
-        }
+        } // else if
         else if(count != claimq){
             removeDice(currentPlayer);
             statusText.setText("Player " + (currentPlayer + 1) + ", loses a dice & starts next round");
-        }
+        } // else if
         else{
             Log.d("error", "this should never appear");
-        }
+        } // else
 
         diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + count + " " + claimf + "'s" );
 
@@ -187,7 +183,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }, (4000));
 
-    }
+    } // exactClick
 
     public void newGame() {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -201,7 +197,7 @@ public class MainActivity extends ActionBarActivity {
                                     playerList.add(new Player(i + 1));
                                     nameList.add(playerList.get(i).name);
                                     diceInPlay += 5;
-                                }
+                                } // for
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
                                 claimText.setText("Claim: ");
@@ -212,7 +208,7 @@ public class MainActivity extends ActionBarActivity {
                 .setCancelable(false)
                 .create()
                 .show();
-    }
+    } // newGame
 
 
     public void playAgainClick(View v){
@@ -228,12 +224,11 @@ public class MainActivity extends ActionBarActivity {
 
         newGame();
 
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, nameList);
 
         boardView.setAdapter(adapter);
-    }
+    } // playAgainClick
 
     public void doubtClick(View v){
         int count = 0;
@@ -241,26 +236,26 @@ public class MainActivity extends ActionBarActivity {
             for (int x = 0 ; x < playerList.get(i).hand.size(); x++){
                 if (playerList.get(i).hand.get(x) == claimf || playerList.get(i).hand.get(x) == 1){
                     count++;
-                }
-            }
-        }
+                } // if
+            } // for
+        } // for
 
         if (count >= claimq){
             //currentPlayer doubt was wrong and must lose a dice
             removeDice(currentPlayer);
 
-        }
+        } // if
         else{
         //previous player made an invalid claim and was called on it. previous player loses a dice.
             if (currentPlayer != 0) {
                 removeDice(currentPlayer - 1);
                 currentPlayer = currentPlayer - 1;
-            }
+            } // if
             else {
                 removeDice(playerList.size() - 1);
                 currentPlayer = playerList.size() - 1;
-            }
-        }
+            } // else
+        } // else
 
         diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + count + " " + claimf + "'s");
 
@@ -278,15 +273,15 @@ public class MainActivity extends ActionBarActivity {
             }
         }, (4000));
 
-    }
+    } // doubtClick
 
     public void removeDice(int player) {
         playerList.get(player).hand.remove(0);
         if (playerList.get(player).hand.size() == 0){
             //player loses, remove him from playerList
             playerList.remove(player);
-        }
-    }
+        } // if
+    } // removeDice
 
 
     public void enableButtons(){
@@ -296,12 +291,12 @@ public class MainActivity extends ActionBarActivity {
             //resetDice();    //if there is no claim then it is first move in round and dice should be reset
             doubtButton.setEnabled(false);
             exactButton.setEnabled(false);
-        }
+        } // if
         else{
             doubtButton.setEnabled(true);
             exactButton.setEnabled(true);
-        }
-    }
+        } // else
+    } // else
 
     public void disableButtons(){
         playAgainButton.setEnabled(false);
@@ -309,22 +304,22 @@ public class MainActivity extends ActionBarActivity {
         exactButton.setEnabled(false);
         doubtButton.setEnabled(false);
         disableDice();
-    }
+    } // disableButtons
 
     public void hideDice(){
         for (int i = 0 ; i < dice.length; i++){
             dice[i].setText(" ");
-        }
-    }
+        } // for
+    } // hideDice
 
     public void getClaim(){
         LayoutInflater infl = LayoutInflater.from(this);
         final View inflator = infl.inflate(R.layout.claim_layout, null);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        alert.setTitle("Make a claim");
-        alert.setCancelable(true);
-        alert.setView(inflator);
+        alert.setTitle("Make a claim")
+            .setCancelable(true)
+            .setView(inflator);
 
         quant = (EditText) inflator.findViewById(R.id.quantity);
         face = (EditText) inflator.findViewById(R.id.faceValue);
@@ -367,9 +362,9 @@ public class MainActivity extends ActionBarActivity {
                 }, (4000));
 
             }
-        });
-        alert.show();
-    }
+        })
+        .show();
+    } // getClaim
 
 
     public void enableDice(){
@@ -388,12 +383,12 @@ public class MainActivity extends ActionBarActivity {
             dice[i].setText("");
             dice[i].setBackground(getDiceDrawable(playerList.get(player).hand.get(i)));
             //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
-        }
+        } // for
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
             dice[i].setText("DEAD");
             dice[i].setBackground(null);
-        }
-    }
+        } // for
+    } // setDice
 
     public Drawable getDiceDrawable(int value){
         if(value == 1){
@@ -409,24 +404,22 @@ public class MainActivity extends ActionBarActivity {
         }else{
             return getDrawable(R.drawable.six);
         }
-    }
+    } // getDiceDrawable
 
     public void resetDice(){
         for (int i = 0 ; i <playerList.size() ; i++){
             playerList.get(i).newHand();
-        }
-    }
+        } // for
+    } // resetDice
 
     public int totalDice() {
         int total = 0;
+
         for (int i = 0 ; i < playerList.size(); i++){
            total += playerList.get(i).hand.size();
-        }
-    return total;
-    }
+        } // for
 
+        return total;
+    } // totalDice
 
-
-
-
-}
+} // MainActivity
