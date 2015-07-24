@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
     TextView switchText;
     TextView diceText;
     EditText quant;
-    EditText face;
+    Spinner face;
     Handler handler;
 
 
@@ -322,20 +323,15 @@ public class MainActivity extends ActionBarActivity {
             .setView(inflator);
 
         quant = (EditText) inflator.findViewById(R.id.quantity);
-        face = (EditText) inflator.findViewById(R.id.faceValue);
+        face = (Spinner) inflator.findViewById(R.id.faceValue);
         // Get the layout inflater
-
 
         alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 int currentQ = Integer.parseInt(quant.getText().toString().trim());
-                int currentF = Integer.parseInt(face.getText().toString().trim());
-
-                if (currentF > 6 || currentF < 1) {
-                    //TODO handle bad user input fur to out of bounds face value
-                }
+                int currentF = Integer.parseInt(face.getSelectedItem().toString());
 
                 //game rules for valid claim
                 if ((currentQ > claimq) || (currentQ == claimq && currentF > claimf)) {

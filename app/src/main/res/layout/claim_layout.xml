@@ -17,15 +17,24 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:hint="Quantity" />
-    <EditText
+    <TextView android:text="Face Value:"
+        android:id="@+id/faceValueHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp">
+    </TextView>
+    <Spinner
         android:id="@+id/faceValue"
-        android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"
-        android:hint="Face Value"/>
+        android:drawSelectorOnTop="true"
+        android:entries="@array/faceValues"
+        android:fontFamily="sans-serif" />
 </LinearLayout>
