@@ -21,7 +21,8 @@
         android:text=""
         android:id="@+id/die2"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/die1"/>
+        android:layout_toRightOf="@id/die1"
+        android:layout_toEndOf="@id/die1"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -30,7 +31,8 @@
         android:text=""
         android:id="@+id/die3"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/die2"/>
+        android:layout_toRightOf="@id/die2"
+        android:layout_toEndOf="@id/die2"/>
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="65dp"
@@ -38,7 +40,8 @@
         android:text=""
         android:id="@+id/die4"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/die3"/>
+        android:layout_toRightOf="@id/die3"
+        android:layout_toEndOf="@id/die3"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -47,14 +50,15 @@
         android:text=""
         android:id="@+id/die5"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/die4"/>
+        android:layout_toRightOf="@id/die4"
+        android:layout_toEndOf="@id/die4"/>
 
     <TextView
         android:layout_width="320dp"
         android:layout_height="30dp"
         android:textAllCaps="false"
-        android:textSize="20dp"
-        android:text="Dice In Play: "
+        android:textSize="20sp"
+        android:text="@string/num_dice"
         android:id="@+id/diceText"
         android:layout_above="@+id/statusText"
         android:gravity="center_horizontal"
@@ -64,8 +68,8 @@
         android:layout_width="320dp"
         android:layout_height="30dp"
         android:textAllCaps="false"
-        android:textSize="20dp"
-        android:text="Make claim Player"
+        android:textSize="20sp"
+        android:text="@string/make_claim"
         android:id="@+id/statusText"
         android:layout_above="@+id/playerText"
         android:gravity="center_horizontal"
@@ -75,7 +79,7 @@
         android:layout_width="180dp"
         android:layout_height="30dp"
         android:textAllCaps="true"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:text="Player: 1"
         android:id="@+id/playerText"
         android:layout_above="@+id/playAgainButton"/>
@@ -83,16 +87,17 @@
         android:layout_width="175dp"
         android:layout_height="30dp"
         android:textAllCaps="true"
-        android:textSize="20dp"
-        android:text="Claim: "
+        android:textSize="20sp"
+        android:text="@string/claim"
         android:id="@+id/claimText"
         android:layout_above="@+id/exactButton"
-        android:layout_toRightOf="@+id/playerText"/>
+        android:layout_toRightOf="@+id/playerText"
+        android:layout_toEndOf="@+id/playerText"/>
 
     <Button
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:text="Make Claim"
+        android:text="@string/claim_btn"
         android:id="@+id/claimButton"
         android:layout_above="@+id/die1"
         android:layout_alignParentLeft="true"
@@ -103,7 +108,7 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:text="Doubt Call"
+        android:text="@string/doubt_btn"
         android:id="@+id/doubtButton"
         android:clickable="true"
         android:layout_alignTop="@+id/claimButton"
@@ -114,7 +119,7 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:text="Play Again"
+        android:text="@string/play_again_btn"
         android:id="@+id/playAgainButton"
         android:layout_above="@+id/claimButton"
         android:layout_alignParentLeft="true"
@@ -125,7 +130,7 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:text="Exactly"
+        android:text="@string/exactly_btn"
         android:id="@+id/exactButton"
         android:clickable="true"
         android:layout_above="@+id/doubtButton"
