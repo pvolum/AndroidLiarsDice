@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,12 +77,6 @@ public class MainActivity extends ActionBarActivity {
         dice[3] = (Button) findViewById(R.id.die4);
         dice[4] = (Button) findViewById(R.id.die5);
 
-        currentPlayer = 0;
-        claimq = 0;
-        claimf = 0;
-        claimText.setText("claim: ");
-        doubtButton.setEnabled(false);
-
         newGame();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -108,14 +103,16 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if ( id == R.id.new_game ) {
+            // restart game
+            newGame();
+        } else if (id == R.id.action_settings) {
             String url = "http://www.wikihow.com/Play-Liar%27s-Dice";
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
             return true;
-        } // if
+        } // else if
 
         return super.onOptionsItemSelected(item);
     } // onOptionsItemSelected
@@ -153,7 +150,7 @@ public class MainActivity extends ActionBarActivity {
         } // for
 
         if (count == claimq && playerList.get(currentPlayer).hand.size() !=5){
-            //exact call was correct so add dice to currentplayers hand
+            //exact call was correct so add dice to current players hand
             //if currentPlayer doesnt already have 5 dice
             playerList.get(currentPlayer).hand.add(r.nextInt(6) + 1);
             statusText.setText("Player " + (currentPlayer + 1) + ", wins a dice & starts next round!");
@@ -187,6 +184,15 @@ public class MainActivity extends ActionBarActivity {
 
     public void newGame() {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        // reset core elements of the game to default values
+        playAgainButton.setEnabled(false);
+        currentPlayer = 0;
+        claimq = 0;
+        claimf = 0;
+        claimText.setText("claim: ");
+        doubtButton.setEnabled(false);
+        nameList.clear();
+        playerList.clear();
 
         alert.setTitle("Select number of players:")
                 .setItems(new CharSequence[] {"2", "3", "4"},
@@ -198,6 +204,7 @@ public class MainActivity extends ActionBarActivity {
                                     nameList.add(playerList.get(i).name);
                                     diceInPlay += 5;
                                 } // for
+                                resetDice();
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
                                 claimText.setText("Claim: ");
@@ -212,15 +219,6 @@ public class MainActivity extends ActionBarActivity {
 
 
     public void playAgainClick(View v){
-        playAgainButton.setEnabled(false);
-        currentPlayer = 0;
-        claimq = 0;
-        claimf = 0;
-        claimText.setText("claim: ");
-        doubtButton.setEnabled(false);
-
-        nameList.clear();
-        playerList.clear();
 
         newGame();
 
@@ -385,24 +383,24 @@ public class MainActivity extends ActionBarActivity {
             //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
         } // for
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
-            dice[i].setText("DEAD");
+            dice[i].setText("");
             dice[i].setBackground(null);
         } // for
     } // setDice
 
     public Drawable getDiceDrawable(int value){
         if(value == 1){
-            return getDrawable(R.drawable.one);
+            return ContextCompat.getDrawable(this, R.drawable.one);
         }else if(value == 2){
-            return getDrawable(R.drawable.two);
+            return ContextCompat.getDrawable(this, R.drawable.two);
         }else if (value == 3){
-            return getDrawable(R.drawable.three);
+            return ContextCompat.getDrawable(this, R.drawable.three);
         }else if (value == 4){
-            return getDrawable(R.drawable.four);
+            return ContextCompat.getDrawable(this, R.drawable.four);
         }else if (value == 5){
-            return getDrawable(R.drawable.five);
+            return ContextCompat.getDrawable(this, R.drawable.five);
         }else{
-            return getDrawable(R.drawable.six);
+            return ContextCompat.getDrawable(this, R.drawable.six);
         }
     } // getDiceDrawable
 
