@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
     TextView switchText;
     TextView diceText;
     EditText quant;
-    EditText face;
+    Spinner face;
     Handler handler;
 
 
@@ -183,6 +185,8 @@ public class MainActivity extends ActionBarActivity {
     } // exactClick
 
     public void newGame() {
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
+
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         // reset core elements of the game to default values
         playAgainButton.setEnabled(false);
@@ -198,6 +202,7 @@ public class MainActivity extends ActionBarActivity {
                 .setItems(new CharSequence[] {"2", "3", "4"},
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                mp.start();
                                 int value = which + 2;
                                 for (int i = 0; i < value; i++) {   //valid # of players
                                     playerList.add(new Player(i + 1));
@@ -314,51 +319,56 @@ public class MainActivity extends ActionBarActivity {
         LayoutInflater infl = LayoutInflater.from(this);
         final View inflator = infl.inflate(R.layout.claim_layout, null);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final AlertDialog.Builder error = new AlertDialog.Builder(this);
 
         alert.setTitle("Make a claim")
             .setCancelable(true)
             .setView(inflator);
 
         quant = (EditText) inflator.findViewById(R.id.quantity);
-        face = (EditText) inflator.findViewById(R.id.faceValue);
+        face = (Spinner) inflator.findViewById(R.id.faceValue);
         // Get the layout inflater
-
 
         alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 int currentQ = Integer.parseInt(quant.getText().toString().trim());
-                int currentF = Integer.parseInt(face.getText().toString().trim());
-
-                if (currentF > 6 || currentF < 1) {
-                    //TODO handle bad user input fur to out of bounds face value
-                }
+                int currentF = Integer.parseInt(face.getSelectedItem().toString());
 
                 //game rules for valid claim
                 if ((currentQ > claimq) || (currentQ == claimq && currentF > claimf)) {
                     claimq = currentQ;
                     claimf = currentF;
+
+                    //transfer control to next player with status text 4 sec interlude
+                    if (currentPlayer < (playerList.size() - 1)) {
+                        currentPlayer += 1;
+                    } else currentPlayer = 0;
+
+                    statusText.setText("Please Pass Phone To Player " + (currentPlayer + 1));
+                    disableButtons();
+                    hideDice();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            claimText.setText("Claim: " + claimq + " " + claimf + "'s");
+                            play(currentPlayer);
+                        }
+                    }, (4000));
+
                 } else {
-                    //TODO handle bad user input due to it being invalid relative to previous claim
+                    dialog.cancel();
+                    error.setTitle("Invalid Claim")
+                        .setMessage("Please try again.")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
                 }
-
-                //transfer control to next player with status text 4 sec interlude
-                if (currentPlayer < (playerList.size() - 1)) {
-                    currentPlayer += 1;
-                } else currentPlayer = 0;
-
-                statusText.setText("Please Pass Phone To Player " + (currentPlayer + 1));
-                disableButtons();
-                hideDice();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        claimText.setText("Claim: " + claimq + " " + claimf + "'s");
-                        play(currentPlayer);
-                    }
-                }, (4000));
-
             }
         })
         .show();
@@ -383,8 +393,8 @@ public class MainActivity extends ActionBarActivity {
             //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
         } // for
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
-            dice[i].setText("");
-            dice[i].setBackground(null);
+            //dice[i].setText("DEAD");
+            dice[i].setBackground(getDrawable(R.drawable.dead));
         } // for
     } // setDice
 

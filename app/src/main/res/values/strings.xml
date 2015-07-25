@@ -12,4 +12,13 @@
     <!-- menu strings -->
     <string name="new_game">New Game</string>
     <string name="action_instructions">Instructions</string>
+
+    <string-array name="faceValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
 </resources>
