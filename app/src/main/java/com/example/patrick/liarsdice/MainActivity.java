@@ -394,7 +394,7 @@ public class MainActivity extends ActionBarActivity {
         } // for
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
             //dice[i].setText("DEAD");
-            dice[i].setBackground(getDrawable(R.drawable.dead));
+            dice[i].setBackground(ContextCompat.getDrawable(this, R.drawable.dead));
         } // for
     } // setDice
 
