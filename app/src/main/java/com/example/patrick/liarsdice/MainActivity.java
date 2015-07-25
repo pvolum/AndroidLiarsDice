@@ -48,7 +48,8 @@ public class MainActivity extends ActionBarActivity {
     EditText quant;
     Spinner face;
     Handler handler;
-
+    Player ai;
+    boolean ai_in_play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,16 +125,29 @@ public class MainActivity extends ActionBarActivity {
         setDice(player);
 
         //check end of game condition/ only one person left
-        if (playerList.size() == 1){
-            statusText.setText("Only one player standing! you win!");
-            playAgainButton.setEnabled(true);
-        } // if
-        else {
-            statusText.setText("Player " + (player + 1) + "'s Turn");
-            playerText.setText("Player: " + (player + 1));
-            enableButtons();
-            disableDice();
-        } // else
+        if(!ai_in_play) {
+            if (playerList.size() == 1) {
+                statusText.setText("Only one player standing! you win!");
+                playAgainButton.setEnabled(true);
+            } // if
+            else {
+                statusText.setText("Player " + (player + 1) + "'s Turn");
+                playerText.setText("Player: " + (player + 1));
+                enableButtons();
+                disableDice();
+            } // else
+        }else{
+            if(playerList.get(0).hand.size() == 0){
+                statusText.setText("You are out of dice! Jarvis wins!");
+                playAgainButton.setEnabled(true);
+            }else if (ai.hand.size() == 0){
+                statusText.setText("Jarvis is out of dice! You Win!");
+                playAgainButton.setEnabled(true);
+            }else if(claimq != 0 && claimf != 0){
+                aiTurn();
+                enableButtons();
+            }
+        }
 
     } // play
 
@@ -199,16 +213,21 @@ public class MainActivity extends ActionBarActivity {
         playerList.clear();
 
         alert.setTitle("Select number of players:")
-                .setItems(new CharSequence[] {"2", "3", "4"},
+                .setItems(new CharSequence[] {"1", "2", "3", "4"},
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 mp.start();
-                                int value = which + 2;
+                                int value = which + 1;
                                 for (int i = 0; i < value; i++) {   //valid # of players
                                     playerList.add(new Player(i + 1));
                                     nameList.add(playerList.get(i).name);
                                     diceInPlay += 5;
                                 } // for
+                                if(value == 1){ //if AI is playing
+                                    ai = new Player(-1);
+                                    diceInPlay += 5;
+                                    ai_in_play = true;
+                                } else ai_in_play = false;
                                 resetDice();
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
@@ -242,14 +261,21 @@ public class MainActivity extends ActionBarActivity {
                 } // if
             } // for
         } // for
+        if(ai_in_play){
+            for(int i = 0; i < ai.hand.size(); i++){
+                if(ai.hand.get(i) == claimf || ai.hand.get(i) == 1){
+                    count++;
+                }
+            }
+        }
 
         if (count >= claimq){
             //currentPlayer doubt was wrong and must lose a dice
             removeDice(currentPlayer);
 
         } // if
-        else{
-        //previous player made an invalid claim and was called on it. previous player loses a dice.
+        else if(!ai_in_play){
+            //previous player made an invalid claim and was called on it. previous player loses a dice.
             if (currentPlayer != 0) {
                 removeDice(currentPlayer - 1);
                 currentPlayer = currentPlayer - 1;
@@ -259,6 +285,10 @@ public class MainActivity extends ActionBarActivity {
                 currentPlayer = playerList.size() - 1;
             } // else
         } // else
+        else{
+            ai.hand.remove(0);
+            resetDice();
+        }
 
         diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + count + " " + claimf + "'s");
 
@@ -275,6 +305,7 @@ public class MainActivity extends ActionBarActivity {
                 play(currentPlayer);
             }
         }, (4000));
+        enableButtons();
 
     } // doubtClick
 
@@ -424,10 +455,102 @@ public class MainActivity extends ActionBarActivity {
         int total = 0;
 
         for (int i = 0 ; i < playerList.size(); i++){
-           total += playerList.get(i).hand.size();
+            total += playerList.get(i).hand.size();
         } // for
 
+        if(ai_in_play) total += ai.hand.size();
         return total;
     } // totalDice
+
+    public void aiTurn(){
+        int faceCount = 0;
+        boolean doubt_flag = false;
+        for(int i = 0; i < ai.hand.size(); i++){
+            if(claimf == ai.hand.get(i) || ai.hand.get(i) == 1) {
+                faceCount++;
+            }
+        }
+        double faceProbability = getClaimProbability(claimq,claimf,faceCount);
+        if(faceProbability > .33){
+            //likely that claim is true, make new claim
+            if(faceCount > claimq){
+                claimq = faceCount;
+            }else if (faceCount == claimq){
+                claimq = faceCount+1;
+            }else{
+                doubt_flag = true;
+            }
+            if(!doubt_flag) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusText.setText("Jarvis made a claim");
+                        claimText.setText("Claim: " + claimq + " " + claimf + "'s");
+                    }
+                }, (500));
+            }
+
+        }
+        if(faceProbability <= .33 || doubt_flag){
+            //likely that the claim is false
+            //doubt
+            for(int i = 0; i < playerList.get(0).hand.size(); i++){
+                if(claimf == playerList.get(0).hand.get(i) || playerList.get(0).hand.get(i) == 1){
+                    faceCount++;
+                }
+            }
+            if(claimq <= faceCount){ //ai doubt was wrong
+                ai.hand.remove(0);
+                statusText.setText("Jarvis doubted you and lost a dice!");
+            }else{
+                removeDice(0);
+                statusText.setText("Jarvis doubted you! You lost a die!");
+            }
+            resetDice();
+
+
+            diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + faceCount + " " + claimf + "'s");
+            claimq = 0;
+            claimf = 0;
+            claimText.setText("Claim: ");
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    play(0);
+                }
+            }, (4000));
+        }
+        enableButtons();
+    }
+
+    public double getClaimProbability(int q, int f, int offset){
+        //BINOMIAL SUMMATION FORMULA
+        double faceProbability;
+        if(f == 1) faceProbability = (1.0/6.0);
+        else faceProbability = (1.0/3.0);
+        int diceInConsideration = diceInPlay-offset;
+
+        double total = 0;
+        for(int i = claimq; i < diceInConsideration; i++){
+            double choose = choose(diceInConsideration,i);
+            double first =  Math.pow(faceProbability, i);
+            double second = Math.pow(1-faceProbability,diceInConsideration-i);
+            total += choose*first*second;
+        }
+        return total;
+    }
+
+    public int factorial(int x){
+        for(int i = x-1; i > 1; i--){
+            x = x*i;
+        }
+        return x;
+    }
+    public double choose(int n, int k){
+        //n choose k
+        return factorial(n)/(factorial(k)*factorial(n-k));
+    }
+
 
 } // MainActivity
