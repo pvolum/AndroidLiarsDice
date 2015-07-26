@@ -191,8 +191,6 @@ public class MainActivity extends ActionBarActivity {
     } // exactClick
 
     public void newGame() {
-        final MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
-
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         // reset core elements of the game to default values
         playAgainButton.setEnabled(false);
@@ -208,7 +206,6 @@ public class MainActivity extends ActionBarActivity {
                 .setItems(new CharSequence[] {"1", "2", "3", "4"},
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                mp.start();
                                 int value = which + 1;
                                 for (int i = 0; i < value; i++) {   //valid # of players
                                     playerList.add(new Player(i + 1));
@@ -220,7 +217,7 @@ public class MainActivity extends ActionBarActivity {
                                     diceInPlay += 5;
                                     ai_in_play = true;
                                 } else ai_in_play = false;
-                                resetDice();
+                                resetDice(false);
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
                                 claimText.setText(R.string.claim);
@@ -271,7 +268,7 @@ public class MainActivity extends ActionBarActivity {
         } // else if
         else{
             ai.hand.remove(0);
-            resetDice();
+            resetDice(true);
         } // else
 
         diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + count + " " + claimf + "'s");
@@ -299,6 +296,7 @@ public class MainActivity extends ActionBarActivity {
             //player loses, remove him from playerList
             playerList.remove(player);
         } // if
+        resetDice(true);
     } // removeDice
 
 
@@ -431,8 +429,23 @@ public class MainActivity extends ActionBarActivity {
         }
     } // getDiceDrawable
 
-    public void resetDice(){
-        for (int i = 0 ; i <playerList.size() ; i++){
+    public void resetDice(boolean soundDelay){
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
+
+        if (soundDelay) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mp.start();
+                }
+            }, (4000));
+        }
+        else
+        {
+            mp.start();
+        }
+
+        for (int i = 0 ; i < playerList.size() ; i++){
             playerList.get(i).newHand();
         } // for
     } // resetDice
@@ -508,7 +521,7 @@ public class MainActivity extends ActionBarActivity {
                 removeDice(0);
                 statusText.setText("Jarvis doubted you! You lost a die!");
             }
-            resetDice();
+            resetDice(false);
 
 
             diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + faceCount + " " + claimf + "'s");
