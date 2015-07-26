@@ -122,7 +122,7 @@ public class MainActivity extends ActionBarActivity {
         //check end of game condition/ only one person left
         if(!ai_in_play) {
             if (playerList.size() == 1) {
-                statusText.setText("Only one player standing! you win!");
+                statusText.setText("Only one player standing! You win!");
                 playAgainButton.setEnabled(true);
             } // if
             else {
@@ -159,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
             //exact call was correct so add dice to current players hand
             //if currentPlayer doesnt already have 5 dice
             playerList.get(currentPlayer).hand.add(r.nextInt(6) + 1);
-            statusText.setText("Player " + (currentPlayer + 1) + ", wins a dice & starts next round!");
+            statusText.setText("Player " + (currentPlayer + 1) + ", wins a die & starts next round!");
             claimText.setText(R.string.claim);
         } // if
         else if(count == claimq && playerList.get(currentPlayer).hand.size() == 5){
@@ -168,7 +168,7 @@ public class MainActivity extends ActionBarActivity {
         } // else if
         else if(count != claimq){
             removeDice(currentPlayer);
-            statusText.setText("Player " + (currentPlayer + 1) + ", loses a dice & starts next round");
+            statusText.setText("Player " + (currentPlayer + 1) + ", loses a die & starts next round");
             claimText.setText(R.string.claim);
         } // else if
         else{
@@ -199,7 +199,7 @@ public class MainActivity extends ActionBarActivity {
         currentPlayer = 0;
         claimq = 0;
         claimf = 0;
-        claimText.setText("claim: ");
+        claimText.setText(R.string.claim);
         doubtButton.setEnabled(false);
         nameList.clear();
         playerList.clear();
@@ -223,7 +223,7 @@ public class MainActivity extends ActionBarActivity {
                                 resetDice();
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
-                                claimText.setText("Claim: ");
+                                claimText.setText(R.string.claim);
                                 play(currentPlayer);
                             }
                         })
@@ -245,7 +245,7 @@ public class MainActivity extends ActionBarActivity {
     public void doubtClick(View v){
 
         int count = getCount();
-        
+
         if(ai_in_play){
             for(int i = 0; i < ai.hand.size(); i++){
                 if(ai.hand.get(i) == claimf || ai.hand.get(i) == 1){
@@ -278,7 +278,7 @@ public class MainActivity extends ActionBarActivity {
 
         claimq = 0;
         claimf = 0;
-        statusText.setText("Player " + (currentPlayer + 1) + " lost a dice and starts next round");
+        statusText.setText("Player " + (currentPlayer + 1) + " lost a die and starts next round");
         claimText.setText(R.string.claim);
 
         disableButtons();
@@ -305,7 +305,8 @@ public class MainActivity extends ActionBarActivity {
     public void enableButtons(){
 
         claimButton.setEnabled(true);
-        if (claimText.getText().equals("Claim: ") || exactlyClicked){
+        Log.d("Checks", "claimText: " + claimText.getText());
+        if (claimText.getText().equals("Claim:") || exactlyClicked){
             doubtButton.setEnabled(false);
             exactButton.setEnabled(false);
             exactlyClicked = false;
@@ -368,7 +369,7 @@ public class MainActivity extends ActionBarActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            claimText.setText("Claim: " + claimq + " " + claimf + "'s");
+                            claimText.setText(R.string.claim + claimq + " " + claimf + "'s");
                             play(currentPlayer);
                         }
                     }, (4000));
@@ -486,7 +487,7 @@ public class MainActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         statusText.setText("Jarvis made a claim");
-                        claimText.setText("Claim: " + claimq + " " + claimf + "'s");
+                        claimText.setText(R.string.claim + claimq + " " + claimf + "'s");
                     }
                 }, (500));
             }
@@ -502,7 +503,7 @@ public class MainActivity extends ActionBarActivity {
             }
             if(claimq <= faceCount){ //ai doubt was wrong
                 ai.hand.remove(0);
-                statusText.setText("Jarvis doubted you and lost a dice!");
+                statusText.setText("Jarvis doubted you and lost a die!");
             }else{
                 removeDice(0);
                 statusText.setText("Jarvis doubted you! You lost a die!");
@@ -513,7 +514,7 @@ public class MainActivity extends ActionBarActivity {
             diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + faceCount + " " + claimf + "'s");
             claimq = 0;
             claimf = 0;
-            claimText.setText("Claim: ");
+            claimText.setText(R.string.claim);
 
             handler.postDelayed(new Runnable() {
                 @Override
@@ -550,6 +551,8 @@ public class MainActivity extends ActionBarActivity {
     }
     public double choose(int n, int k){
         //n choose k
+        if (0 == k) // cannot divide by 0
+            k = 1;
         return factorial(n)/(factorial(k)*factorial(n-k));
     }
 
