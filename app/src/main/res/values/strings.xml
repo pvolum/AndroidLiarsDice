@@ -10,6 +10,7 @@
     <string name="exactly_btn">Exactly</string>
     <string name="quantity">Quantity</string>
     <string name="spinner_title">Face Value:</string>
+    <string name="player">Player: </string>
     <!-- menu strings -->
     <string name="new_game">New Game</string>
     <string name="action_instructions">Instructions</string>

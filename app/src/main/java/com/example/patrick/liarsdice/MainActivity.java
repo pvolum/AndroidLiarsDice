@@ -35,7 +35,6 @@ public class MainActivity extends ActionBarActivity {
     boolean exactlyClicked;
     ArrayList<Player> playerList;
     ArrayList<String> nameList;
-    ListView boardView;
     Button [] dice;
     Button claimButton;
     Button doubtButton;
@@ -58,7 +57,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         playerList = new ArrayList<>();
-        boardView = (ListView) findViewById(R.id.boardView);
         nameList = new ArrayList<>();
         dice = new Button[5];
         handler = new Handler();
@@ -197,7 +195,7 @@ public class MainActivity extends ActionBarActivity {
         currentPlayer = 0;
         claimq = 0;
         claimf = 0;
-        claimText.setText(R.string.claim);
+        claimText.setText("Claim: ");
         doubtButton.setEnabled(false);
         nameList.clear();
         playerList.clear();
@@ -220,7 +218,7 @@ public class MainActivity extends ActionBarActivity {
                                 resetDice(false);
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
-                                claimText.setText(R.string.claim);
+                                claimText.setText("Claim: ");
                                 play(currentPlayer);
                             }
                         })
@@ -228,11 +226,6 @@ public class MainActivity extends ActionBarActivity {
                 .setCancelable(false)
                 .create()
                 .show();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, nameList);
-
-        boardView.setAdapter(adapter);
 
     } // newGame
 
@@ -303,8 +296,7 @@ public class MainActivity extends ActionBarActivity {
     public void enableButtons(){
 
         claimButton.setEnabled(true);
-        Log.d("Checks", "claimText: " + claimText.getText());
-        if (claimText.getText().equals("Claim:") || exactlyClicked){
+        if (claimText.getText().equals("Claim: ") || exactlyClicked){
             doubtButton.setEnabled(false);
             exactButton.setEnabled(false);
             exactlyClicked = false;
@@ -367,7 +359,7 @@ public class MainActivity extends ActionBarActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            claimText.setText(R.string.claim + claimq + " " + claimf + "'s");
+                            claimText.setText("Claim: " + claimq + " " + claimf + "'s");
                             play(currentPlayer);
                         }
                     }, (4000));
@@ -500,7 +492,7 @@ public class MainActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         statusText.setText("Jarvis made a claim");
-                        claimText.setText(R.string.claim + claimq + " " + claimf + "'s");
+                        claimText.setText("Claim: " + claimq + " " + claimf + "'s");
                     }
                 }, (500));
             }
@@ -527,7 +519,7 @@ public class MainActivity extends ActionBarActivity {
             diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + faceCount + " " + claimf + "'s");
             claimq = 0;
             claimf = 0;
-            claimText.setText(R.string.claim);
+            claimText.setText("Claim: ");
 
             handler.postDelayed(new Runnable() {
                 @Override
