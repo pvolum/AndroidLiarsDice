@@ -1,0 +1,139 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/statusText">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/boardView"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/diceText"
+        style="@style/TextStyle"
+        android:text="@string/num_dice"
+        android:layout_above="@+id/claimText"
+        android:layout_toEndOf="@+id/statusText"
+        android:layout_toRightOf="@+id/statusText"/>
+
+    <TextView
+        android:id="@+id/statusText"
+        style="@style/TextStyle"
+        android:text="@string/make_claim"
+        android:layout_above="@+id/playerText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:id="@+id/playerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        android:text="Player: 1"
+        android:layout_above="@+id/die1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/claimText"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        android:text="@string/claim"
+        android:layout_above="@+id/die5"
+        android:layout_toStartOf="@+id/die5"
+        android:layout_toLeftOf="@+id/die5"/>
+
+    <!-- these are control buttons -->
+    <Button
+	    style="@style/ControlButtonStylePullRight"
+        android:text="@string/play_again_btn"
+        android:id="@+id/playAgainButton"
+        android:layout_above="@+id/claimButton"
+        android:onClick="playAgainClick"/>
+
+    <Button
+	    style="@style/ControlButtonStylePullRight"
+        android:text="@string/claim_btn"
+        android:id="@+id/claimButton"
+        android:layout_above="@+id/exactButton"
+        android:onClick="claimClick"/>
+
+    <Button
+	    style="@style/ControlButtonStylePullRight"
+        android:text="@string/exactly_btn"
+        android:id="@+id/exactButton"
+        android:layout_above="@+id/doubtButton"
+        android:onClick="exactClick"/>
+
+    <Button
+	    style="@style/ControlButtonStylePullRight"
+        android:text="@string/doubt_btn"
+        android:id="@+id/doubtButton"
+        android:layout_alignParentBottom="true"
+        android:onClick="doubtClick"/>
+
+    <!-- these are the dice -->
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:text=""
+        android:id="@+id/die1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:text=""
+        android:id="@+id/die2"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/die1"
+        android:layout_toEndOf="@id/die1"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:text=""
+        android:id="@+id/die3"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/die2"
+        android:layout_toEndOf="@id/die2"/>
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:text=""
+        android:id="@+id/die4"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/die3"
+        android:layout_toEndOf="@id/die3"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:text=""
+        android:id="@+id/die5"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/die4"
+        android:layout_toEndOf="@id/die4"/>
+
+</RelativeLayout>
