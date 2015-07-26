@@ -25,6 +25,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Random;
 
+// TODO: fix Jarvis text
+// TODO: handle screen rotation
+// TODO: change the 4 seconds wait for a dialog box
 
 public class MainActivity extends ActionBarActivity {
     Random r;
