@@ -16,18 +16,18 @@
         <TextView
             android:id="@+id/statusText"
             style="@style/GameStatusTextViewStyle"
+            android:layout_width="180dp"
             android:text="@string/make_claim"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true" />
 
         <TextView
             android:id="@+id/diceText"
             style="@style/GameStatusTextViewStyle"
+            android:layout_width="140dp"
             android:text="@string/num_dice"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="17dp"
-            android:layout_marginEnd="17dp"/>
+            android:layout_alignParentRight="true" />
 
     </RelativeLayout>
 

@@ -1,6 +1,7 @@
 package com.example.patrick.liarsdice;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -15,10 +16,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -30,6 +29,9 @@ import java.util.Random;
 // TODO: change the 4 seconds wait for a dialog box
 
 public class MainActivity extends ActionBarActivity {
+
+    private RetainedFragment dataFragment; // used to keep data on configuration change
+
     Random r;
     int claimq;
     int claimf;
@@ -59,6 +61,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getFragmentManager();
+        dataFragment = (RetainedFragment) fm.findFragmentByTag("data");
+
         playerList = new ArrayList<>();
         nameList = new ArrayList<>();
         dice = new Button[5];
@@ -83,9 +89,28 @@ public class MainActivity extends ActionBarActivity {
         dice[3] = (Button) findViewById(R.id.die4);
         dice[4] = (Button) findViewById(R.id.die5);
 
-        newGame();
+        // activity has not been restarted
+        // create the fragment and data the first time
+        if (dataFragment == null) {
+            // add the fragment
+            dataFragment = new RetainedFragment();
+            fm.beginTransaction().add(dataFragment, "data").commit();
+            saveDataFragmentData(); // save newly created data into the fragment
+            newGame();
+        } // if
+        // activity was restarted, load the data
+        else {
+            loadDataFragmentData();
+        } // else
 
     } // onCreate
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // store the data in the fragment
+        saveDataFragmentData();
+    } // onDestroy
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -182,6 +207,7 @@ public class MainActivity extends ActionBarActivity {
         claimf = 0;
 
         disableButtons();
+        resetDice(false);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -198,7 +224,7 @@ public class MainActivity extends ActionBarActivity {
         currentPlayer = 0;
         claimq = 0;
         claimf = 0;
-        claimText.setText("Claim: ");
+        claimText.setText(R.string.claim);
         doubtButton.setEnabled(false);
         nameList.clear();
         playerList.clear();
@@ -221,7 +247,7 @@ public class MainActivity extends ActionBarActivity {
                                 resetDice(false);
                                 diceText.setText("Dice In Play: " + diceInPlay);
                                 dialog.cancel();
-                                claimText.setText("Claim: ");
+                                claimText.setText(R.string.claim);
                                 play(currentPlayer);
                             }
                         })
@@ -247,11 +273,10 @@ public class MainActivity extends ActionBarActivity {
             }
         }
         if (count >= claimq){
-            //currentPlayer doubt was wrong and must lose a dice
+            //currentPlayer doubt was wrong and must lose a die
             removeDice(currentPlayer);
-
         } // if
-        else if(!ai_in_play){
+        else if(!ai_in_play ){
             //previous player made an invalid claim and was called on it. previous player loses a dice.
             if (currentPlayer != 0) {
                 removeDice(currentPlayer - 1);
@@ -299,7 +324,7 @@ public class MainActivity extends ActionBarActivity {
     public void enableButtons(){
 
         claimButton.setEnabled(true);
-        if (claimText.getText().equals("Claim: ") || exactlyClicked){
+        if (claimText.getText().equals("Claim:") || exactlyClicked){
             doubtButton.setEnabled(false);
             exactButton.setEnabled(false);
             exactlyClicked = false;
@@ -400,10 +425,8 @@ public class MainActivity extends ActionBarActivity {
         for (int i = 0 ; i < playerList.get(player).hand.size() ; i++){
             dice[i].setText("");
             dice[i].setBackground(getDiceDrawable(playerList.get(player).hand.get(i)));
-            //dice[i].setText("\n"+Integer.toString(playerList.get(player).hand.get(i)));
         } // for
         for (int i = playerList.get(player).hand.size(); i < dice.length ; i++ ){
-            //dice[i].setText("DEAD");
             dice[i].setBackground(ContextCompat.getDrawable(this, R.drawable.dead));
         } // for
     } // setDice
@@ -424,6 +447,10 @@ public class MainActivity extends ActionBarActivity {
         }
     } // getDiceDrawable
 
+    /* resetDice
+    * forces all players to get new dice
+    * parameters: boolean - soundDelay: determines whether to delay sounds or not
+    * returns: nothing*/
     public void resetDice(boolean soundDelay){
         final MediaPlayer mp = MediaPlayer.create(this, R.raw.roll);
 
@@ -434,17 +461,19 @@ public class MainActivity extends ActionBarActivity {
                     mp.start();
                 }
             }, (4000));
-        }
-        else
-        {
+        } // if
+        else {
             mp.start();
-        }
+        } // else
 
         for (int i = 0 ; i < playerList.size() ; i++){
             playerList.get(i).newHand();
         } // for
     } // resetDice
 
+    /* totalDice
+    * parameters: none
+    * returns: int - number of dice in play*/
     public int totalDice() {
         int total = 0;
 
@@ -472,14 +501,18 @@ public class MainActivity extends ActionBarActivity {
         return count;
     } // getCount
 
+    /* aiTurn
+    * Emulates a turn for the AI
+    * returns: nothing
+    * parameters: none*/
     public void aiTurn(){
         int faceCount = 0;
         boolean doubt_flag = false;
         for(int i = 0; i < ai.hand.size(); i++){
             if(claimf == ai.hand.get(i) || ai.hand.get(i) == 1) {
                 faceCount++;
-            }
-        }
+            } // if
+        } // for
         double faceProbability = getClaimProbability(claimq,claimf,faceCount);
         if(faceProbability > .33){
             //likely that claim is true, make new claim
@@ -489,40 +522,38 @@ public class MainActivity extends ActionBarActivity {
                 claimq = faceCount+1;
             }else{
                 doubt_flag = true;
-            }
+            } // else
             if(!doubt_flag) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         statusText.setText("Jarvis made a claim");
                         claimText.setText("Claim: " + claimq + " " + claimf + "'s");
-                    }
+                    } // run
                 }, (500));
-            }
-
-        }
+            } // if
+        } // if
         if(faceProbability <= .33 || doubt_flag){
             //likely that the claim is false
             //doubt
             for(int i = 0; i < playerList.get(0).hand.size(); i++){
                 if(claimf == playerList.get(0).hand.get(i) || playerList.get(0).hand.get(i) == 1){
                     faceCount++;
-                }
-            }
+                } // if
+            } // for
             if(claimq <= faceCount){ //ai doubt was wrong
                 ai.hand.remove(0);
                 statusText.setText("Jarvis doubted you and lost a die!");
             }else{
                 removeDice(0);
                 statusText.setText("Jarvis doubted you! You lost a die!");
-            }
+            } // else
             resetDice(false);
-
 
             diceText.setText("Dice In Play: " + totalDice() + "    " + "Actual: " + faceCount + " " + claimf + "'s");
             claimq = 0;
             claimf = 0;
-            claimText.setText("Claim: ");
+            claimText.setText("Claim:");
 
             handler.postDelayed(new Runnable() {
                 @Override
@@ -530,10 +561,14 @@ public class MainActivity extends ActionBarActivity {
                     play(0);
                 }
             }, (4000));
-        }
+        } // if
         enableButtons();
-    }
+    } // aiTurn
 
+    /* getClaimProbability
+    * return: double - the probability that a claim is true
+    * parameters:
+     */
     public double getClaimProbability(int q, int f, int offset){
         //BINOMIAL SUMMATION FORMULA
         double faceProbability;
@@ -562,7 +597,40 @@ public class MainActivity extends ActionBarActivity {
         if (0 == k) // cannot divide by 0
             k = 1;
         return factorial(n)/(factorial(k)*factorial(n-k));
-    }
+    } // choose
 
+    private void saveDataFragmentData() {
+        dataFragment.setClaimq(claimq);
+        dataFragment.setClaimf(claimf);
+        dataFragment.setCurrentPlayer(currentPlayer);
+        dataFragment.setDiceInPlay(diceInPlay);
+        dataFragment.setExactlyClicked(exactlyClicked);
+        dataFragment.setPlayerList(playerList);
+        dataFragment.setNameList(nameList);
+        dataFragment.setAi(ai);
+        dataFragment.setAiInPlay(ai_in_play);
+    } // saveDataFragmentData
+
+    private void loadDataFragmentData() {
+        claimq = dataFragment.getClaimq();
+        claimf = dataFragment.getClaimf();
+        currentPlayer = dataFragment.getCurrentPlayer();
+        diceInPlay = dataFragment.getDiceInPlay();
+        exactlyClicked = dataFragment.getExactlyClicked();
+        playerList = dataFragment.getPlayerList();
+        nameList = dataFragment.getNameList();
+        ai = dataFragment.getAi();
+        ai_in_play = dataFragment.getAiInPlay();
+
+        // reset the game board as it was
+        claimText.setText("Claim:" + ((claimq!=0)?" "+claimq:"") + ((claimf!=0)?" "+claimf+"\'s":"") );
+        statusText.setText("Player " + (currentPlayer + 1) +"\'s turn");
+        playerText.setText("Player: " + (currentPlayer + 1));
+        diceText.setText("Dice In Play: " + totalDice());
+
+        setDice(currentPlayer);
+        disableButtons();
+        enableButtons();
+    } // loadDataFragmentData
 
 } // MainActivity
