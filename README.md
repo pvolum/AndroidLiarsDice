@@ -13,9 +13,3 @@ be between 2 and 4 but error checking has yet to be implemented
 
 4- A bunch of helper function around that are pretty self explanatory
 
-Things the app lacks:
--error checking when user enters a claim as well as number of players
--winning conditions are currently checked after a 4 second delay
--customized instructions page branching from the menu in the action bar
-    -current instruction is a wikiHow page
-    -also when the browser is opened and the app returned to, all info is lost
