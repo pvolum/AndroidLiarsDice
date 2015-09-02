@@ -1,3 +1,6 @@
+Liars Dice is one of the more advanced Android Applications I developed. It represents a peruvian dice game I learned as a child with AI as well as pass and play functionality. 
+
+
 1 - onCreate initializes all components and variables and asks the user to enter number of players, should
 be between 2 and 4 but error checking has yet to be implemented
     - onCreate also populates listview which is the makeshift board, currently just listing player names
